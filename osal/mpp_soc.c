@@ -1078,6 +1078,46 @@ static const MppSocInfo mpp_soc_infos[] = {
         {   &vdpu384b, &rkjpegd, NULL, NULL, NULL, NULL},
         {   &vepu511, &rkjpege_vpu720, NULL, NULL},
     },
+    {   /*
+         * RV110 has codec:
+         * 1 - RK H.264/H.265 4K mjpeg encoder
+         */
+        "rv1103",
+        ROCKCHIP_SOC_RV1103,
+        HAVE_RKVENC,
+        {   NULL, NULL, NULL, NULL, },
+        {   &vepu540c, NULL, NULL, NULL, },
+    },
+    {   /*
+         * RV110 has codec:
+         * 1 - RK H.264/H.265 4K mjpeg encoder
+         */
+        "rv1106",
+        ROCKCHIP_SOC_RV1106,
+        HAVE_RKVENC,
+        {   NULL, NULL, NULL, NULL, },
+        {   &vepu540c, NULL, NULL, NULL, },
+    },
+    {   /*
+         * RV110 has codec:
+         * 1 - RK H.264/H.265 4K mjpeg encoder
+         */
+        "rv1103b",
+        ROCKCHIP_SOC_RV1103B,
+        HAVE_RKVENC,
+        {   NULL, NULL, NULL, NULL, },
+        {   &vepu540c, NULL, NULL, NULL, },
+    },
+    {   /*
+         * RV110 has codec:
+         * 1 - RK H.264/H.265 4K mjpeg encoder
+         */
+        "rv1106b",
+        ROCKCHIP_SOC_RV1106B,
+        HAVE_RKVENC,
+        {   NULL, NULL, NULL, NULL, },
+        {   &vepu540c, NULL, NULL, NULL, },
+    },
 };
 
 static const MppSocInfo mpp_soc_default = {
