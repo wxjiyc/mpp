@@ -14,6 +14,7 @@
 #include "mpp_mem.h"
 #include "mpp_debug.h"
 #include "mpp_common.h"
+#include "mpp_platform.h"
 #include "osal_2str.h"
 
 #include "mpp_device_debug.h"
@@ -43,6 +44,9 @@ const char *mpp_get_mpp_service_name(void)
         "/dev/mpp_service",
         "/dev/mpp-service",
     };
+
+    if (!mpp_check_platform_support())
+        return NULL;
 
     if (mpp_service_name)
         return mpp_service_name;
@@ -105,6 +109,7 @@ void check_mpp_service_cap(RK_U32 *codec_type, RK_U32 *hw_ids, MppServiceCmdCap 
     RK_U32 hw_support = 0;
     RK_U32 val;
     RK_U32 i;
+    const char *name = mpp_get_mpp_service_name();
 
     /* for device check on startup */
     mpp_env_get_u32("mpp_device_debug", &mpp_device_debug, 0);
@@ -112,8 +117,13 @@ void check_mpp_service_cap(RK_U32 *codec_type, RK_U32 *hw_ids, MppServiceCmdCap 
     *codec_type = 0;
     memset(hw_ids, 0, sizeof(RK_U32) * 32);
 
+    if (!name) {
+        memset(cap, 0, sizeof(*cap));
+        return;
+    }
+
     /* check hw_support flag for valid client type */
-    fd = open(mpp_get_mpp_service_name(), O_RDWR | O_CLOEXEC);
+    fd = open(name, O_RDWR | O_CLOEXEC);
     if (fd < 0) {
         mpp_err("open mpp_service to check cmd capability failed\n");
         memset(cap, 0, sizeof(*cap));
@@ -153,7 +163,7 @@ void check_mpp_service_cap(RK_U32 *codec_type, RK_U32 *hw_ids, MppServiceCmdCap 
         if (hw_support & (1 << i)) {
             val = i;
 
-            fd = open(mpp_get_mpp_service_name(), O_RDWR | O_CLOEXEC);
+            fd = open(name, O_RDWR | O_CLOEXEC);
             if (fd < 0) {
                 mpp_err("open mpp_service to check cmd capability failed\n");
                 break;
@@ -297,9 +307,14 @@ MPP_RET mpp_service_init(void *ctx, MppClientType type)
 {
     MppDevMppService *p = (MppDevMppService *)ctx;
     MPP_RET ret = MPP_NOK;
+    const char *name = mpp_get_mpp_service_name();
+
+    p->client = -1;
+    if (!name)
+        return ret;
 
     p->cap = mpp_get_mpp_service_cmd_cap();
-    p->client = open(mpp_get_mpp_service_name(), O_RDWR | O_CLOEXEC);
+    p->client = open(name, O_RDWR | O_CLOEXEC);
     if (p->client < 0) {
         mpp_err("open mpp_service failed\n");
         return ret;

@@ -33,6 +33,7 @@ extern "C" {
 #endif
 
 MppIoctlVersion mpp_get_ioctl_version(void);
+rk_u32 mpp_check_platform_support(void);
 MppKernelVersion mpp_get_kernel_version(void);
 rk_u32 mpp_get_2d_hw_flag(void);
 rk_u32 mpp_get_client_hw_id(RK_S32 client_type);

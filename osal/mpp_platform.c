@@ -6,6 +6,7 @@
 #define MODULE_TAG "mpp_platform"
 
 #include <string.h>
+#include <unistd.h>
 
 #include "mpp_env.h"
 #include "mpp_mem.h"
@@ -41,6 +42,11 @@ typedef struct MppPlatformService_t {
 } MppPlatformService;
 
 static MppPlatformService *srv_platform = NULL;
+
+rk_u32 mpp_check_platform_support(void)
+{
+    return access("/dev/mpi/valloc", F_OK);
+}
 
 static MppKernelVersion check_kernel_version(void)
 {
@@ -117,6 +123,13 @@ static void mpp_plat_srv_init()
     cap->send_cmd = MPP_CMD_SEND_BASE + 1;
     cap->poll_cmd = MPP_CMD_POLL_BASE + 1;
     cap->ctrl_cmd = MPP_CMD_CONTROL_BASE + 0;
+
+    if (!mpp_check_platform_support()) {
+        srv->ioctl_version = IOCTL_VERSION_BUTT;
+        mpp_log("RKMPI device nodes detected, RKMPP is not supported\n");
+        /* Keep codec capabilities zero; do not fall back to the SoC table. */
+        return;
+    }
 
     mpp_env_get_u32("mpp_debug", &mpp_debug, 0);
 

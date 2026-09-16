@@ -13,6 +13,7 @@
 #include "mpp_mem.h"
 #include "mpp_debug.h"
 #include "mpp_common.h"
+#include "mpp_platform.h"
 
 #include "mpi_impl.h"
 #include "mpp_info.h"
@@ -411,6 +412,9 @@ MPP_RET mpp_create(MppCtx *ctx, MppApi **mpi)
     *ctx = NULL;
     *mpi = NULL;
 
+    if (!mpp_check_platform_support())
+        return MPP_NOK;
+
     MPP_RET ret = MPP_OK;
     mpi_dbg_func("enter ctx %p mpi %p\n", ctx, mpi);
     do {
@@ -461,6 +465,11 @@ MPP_RET mpp_init(MppCtx ctx, MppCtxType type, MppCodingType coding)
             break;
         }
 
+        if (!mpp_check_platform_support()) {
+            ret = MPP_NOK;
+            break;
+        }
+
         ret = mpp_ctx_init(p->ctx, type, coding);
         p->type     = type;
         p->coding   = coding;
@@ -496,6 +505,9 @@ MPP_RET mpp_check_support_format(MppCtxType type, MppCodingType coding)
 {
     MPP_RET ret = MPP_NOK;
     RK_U32 i = 0;
+
+    if (!mpp_check_platform_support())
+        return MPP_NOK;
 
     for (i = 0; i < MPP_ARRAY_ELEMS(support_list); i++) {
         MppCodingTypeInfo *info = &support_list[i];

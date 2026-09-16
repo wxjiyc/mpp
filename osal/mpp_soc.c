@@ -1252,6 +1252,9 @@ rk_u32 mpp_check_soc_cap(MppCtxType type, MppCodingType coding)
     MppSocSrv *srv = get_srv_soc();
     rk_u32 cap = 0;
 
+    if (!mpp_check_platform_support())
+        return 0;
+
     if (srv) {
         if (type == MPP_CTX_DEC)
             cap = srv->dec_coding_cap;
